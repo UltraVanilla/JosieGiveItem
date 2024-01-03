@@ -4,6 +4,7 @@
 package josie.giveitem;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -55,9 +56,14 @@ public class PlayerJoinHandler implements Listener {
                     var meta = itemStack.getItemMeta();
 
                     var displayName = (String) itemMap.get("display-name");
-                    var lore = (String) itemMap.get("lore");
                     meta.displayName(mm.deserialize(displayName));
-                    meta.lore(Arrays.asList(mm.deserialize(lore)));
+
+                    @SuppressWarnings("unchecked")
+                    List<String> lore = (List<String>) itemMap.get("lore");
+
+                    var mapped = lore.stream().map(line -> mm.deserialize(line)).collect(Collectors.toList());
+
+                    meta.lore(mapped);
 
                     itemStack.setItemMeta(meta);
                     player.getInventory().addItem(itemStack);
